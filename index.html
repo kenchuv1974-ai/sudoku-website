@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SUDOKU – Play &amp; Create</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#home" class="brand" data-nav="home">
+        <span class="brand-mark" aria-hidden="true">9×9</span>
+        <span class="brand-text">SUDOKU</span>
+      </a>
+
+      <button type="button" id="mobile-menu-btn" class="mobile-menu-btn" aria-expanded="false" aria-controls="main-nav" aria-label="Toggle navigation menu">
+        Menu
+      </button>
+
+      <nav id="main-nav" class="main-nav" aria-label="Main navigation">
+        <a href="#home" class="nav-link" data-nav="home">Home</a>
+        <a href="#play" class="nav-link" data-nav="play">Play Sudoku</a>
+        <a href="#create" class="nav-link" data-nav="create">Create Your Own Sudoku</a>
+        <a href="#rules" class="nav-link" data-nav="rules">How to Play Sudoku</a>
+        <a href="#guide" class="nav-link" data-nav="guide">Beginner Guide</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <!-- ==================== HOME VIEW ==================== -->
+    <section id="view-home" class="view active" aria-labelledby="home-title">
+      <div class="hero-card">
+        <p class="hero-kicker">Logic Puzzle Platform</p>
+        <h1 id="home-title" class="hero-title">SUDOKU</h1>
+        <p class="hero-subtitle">Improve your logic, one puzzle at a time.</p>
+
+        <div class="hero-actions">
+          <button type="button" class="btn btn-primary btn-lg" data-go="play">Play Sudoku</button>
+          <button type="button" class="btn btn-secondary btn-lg" data-go="create">Create Your Own Sudoku</button>
+        </div>
+
+        <div class="intro-box">
+          <h2>What is Sudoku?</h2>
+          <p>
+            Sudoku is a classic number-placement logic puzzle played on a 9×9 grid divided into nine 3×3 boxes.
+            Your goal is to fill every empty cell with digits from 1 to 9 so that each row, each column, and each
+            3×3 box contains every digit from 1 to 9 without repeating any number. No math is required — only
+            careful observation and logical thinking.
+          </p>
+        </div>
+      </div>
+
+      <div class="home-features">
+        <article class="feature-card">
+          <h3>Three Difficulty Levels</h3>
+          <p>Start with Easy puzzles if you are new, or challenge your logic with Medium and Hard grids. Every puzzle is verified to have one unique solution.</p>
+          <button type="button" class="btn-link" data-go="play">Start Playing &rarr;</button>
+        </article>
+
+        <article class="feature-card">
+          <h3>Build &amp; Share Puzzles</h3>
+          <p>Enter your own starting numbers, check for conflicts or multiple solutions automatically, save puzzles locally, and play or share them.</p>
+          <button type="button" class="btn-link" data-go="create">Open Puzzle Creator &rarr;</button>
+        </article>
+
+        <article class="feature-card">
+          <h3>Learn Step by Step</h3>
+          <p>Review the five core rules of Sudoku and practice with an interactive beginner walkthrough before starting a full puzzle.</p>
+          <div class="feature-links">
+            <button type="button" class="btn-link" data-go="rules">How to Play &rarr;</button>
+            <button type="button" class="btn-link" data-go="guide">Beginner Guide &rarr;</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==================== PLAY SUDOKU VIEW ==================== -->
+    <section id="view-play" class="view" aria-labelledby="play-title" hidden>
+      <div class="page-header">
+        <div>
+          <h1 id="play-title">Play Sudoku</h1>
+          <p class="page-lead">Select an empty cell and enter a number from 1 to 9 using the buttons or your keyboard.</p>
+        </div>
+        <span id="play-mode-badge" class="badge badge-gold" hidden>Custom Puzzle</span>
+      </div>
+
+      <div class="play-toolbar">
+        <div class="toolbar-group">
+          <label for="play-difficulty" class="field-label">Difficulty</label>
+          <select id="play-difficulty" class="select-input">
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+          </select>
+        </div>
+
+        <div class="stats-bar" aria-live="polite">
+          <div class="stat-item">
+            <span class="stat-label">Mistakes</span>
+            <span id="play-mistakes" class="stat-value">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Hints Left</span>
+            <span id="play-hints-left" class="stat-value">3</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Time</span>
+            <span id="play-timer" class="stat-value">00:00</span>
+          </div>
+        </div>
+
+        <div class="toolbar-actions">
+          <button type="button" id="btn-pause-resume" class="btn btn-outline">Pause</button>
+          <button type="button" id="btn-restart-game" class="btn btn-outline">Restart</button>
+          <button type="button" id="btn-new-game" class="btn btn-primary">New Game</button>
+        </div>
+      </div>
+
+      <div class="game-layout">
+        <div class="board-column">
+          <div class="board-wrapper">
+            <div id="play-grid" class="sudoku-grid" role="grid" aria-label="Playable 9 by 9 Sudoku grid"></div>
+
+            <div id="pause-overlay" class="board-overlay" hidden>
+              <div class="overlay-card">
+                <h2>Game Paused</h2>
+                <p>The timer is stopped and the board is hidden.</p>
+                <button type="button" id="btn-overlay-resume" class="btn btn-primary">Resume Game</button>
+              </div>
+            </div>
+
+            <div id="win-overlay" class="board-overlay" hidden>
+              <div class="overlay-card win-card">
+                <h2>Congratulations!</h2>
+                <p>You solved the Sudoku puzzle accurately using logic.</p>
+                <p id="win-summary" class="win-summary"></p>
+                <div class="overlay-actions">
+                  <button type="button" id="btn-win-new-game" class="btn btn-primary">Play Another Puzzle</button>
+                  <button type="button" id="btn-win-close" class="btn btn-outline">Inspect Board</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="play-status" class="status-banner status-info" role="status" aria-live="polite">
+            Select an empty cell to begin.
+          </div>
+        </div>
+
+        <aside class="controls-column" aria-label="Number pad and game tools">
+          <div class="panel">
+            <h2 class="panel-title">Enter Number</h2>
+            <div id="play-numpad" class="numpad" role="group" aria-label="Number buttons 1 to 9"></div>
+
+            <div class="tool-buttons">
+              <button type="button" id="btn-play-erase" class="btn btn-outline btn-full">Erase Cell</button>
+              <button type="button" id="btn-play-hint" class="btn btn-gold btn-full">Hint (3 left)</button>
+            </div>
+          </div>
+
+          <div class="panel legend-panel">
+            <h2 class="panel-title">Board Guide</h2>
+            <ul class="legend-list">
+              <li><span class="swatch swatch-given"></span> Original given number (locked)</li>
+              <li><span class="swatch swatch-user"></span> Your entered number</li>
+              <li><span class="swatch swatch-selected"></span> Selected cell &amp; matching numbers</li>
+              <li><span class="swatch swatch-error"></span> Incorrect entry (violates rules or solution)</li>
+            </ul>
+            <p class="keyboard-note">Keyboard: Press <strong>1–9</strong> to enter, <strong>Backspace/Delete</strong> to erase, and <strong>Arrow keys</strong> to move.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ==================== CREATE YOUR OWN SUDOKU VIEW ==================== -->
+    <section id="view-create" class="view" aria-labelledby="create-title" hidden>
+      <div class="page-header">
+        <div>
+          <h1 id="create-title">Create Your Own Sudoku</h1>
+          <p class="page-lead">Build your own puzzle by placing starting numbers, then validate that it has one unique solution before playing or saving.</p>
+        </div>
+      </div>
+
+      <div class="game-layout">
+        <div class="board-column">
+          <div class="create-meta-bar">
+            <div class="toolbar-group">
+              <label for="create-puzzle-name" class="field-label">Puzzle Name</label>
+              <input type="text" id="create-puzzle-name" class="text-input" maxlength="40" placeholder="e.g. Morning Logic #1">
+            </div>
+            <div class="toolbar-group">
+              <label for="create-difficulty" class="field-label">Difficulty</label>
+              <select id="create-difficulty" class="select-input">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Clues</span>
+              <span id="create-clue-count" class="stat-value">0 / 81</span>
+            </div>
+          </div>
+
+          <div class="board-wrapper">
+            <div id="create-grid" class="sudoku-grid" role="grid" aria-label="Custom Sudoku creator 9 by 9 grid"></div>
+          </div>
+
+          <div id="create-status" class="status-banner status-info" role="status" aria-live="polite">
+            Click any cell and enter numbers from 1 to 9. Click "Validate Puzzle" when ready.
+          </div>
+          <ul id="create-errors" class="error-list" hidden></ul>
+        </div>
+
+        <aside class="controls-column" aria-label="Creator controls">
+          <div class="panel">
+            <h2 class="panel-title">Enter Starting Numbers</h2>
+            <div id="create-numpad" class="numpad" role="group" aria-label="Creator number buttons 1 to 9"></div>
+
+            <div class="tool-buttons">
+              <button type="button" id="btn-create-erase" class="btn btn-outline btn-full">Erase Cell</button>
+              <button type="button" id="btn-create-clear" class="btn btn-outline btn-full">Clear Grid</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2 class="panel-title">Validate, Save &amp; Play</h2>
+            <div class="stack-buttons">
+              <button type="button" id="btn-create-validate" class="btn btn-gold btn-full">Validate Puzzle</button>
+              <button type="button" id="btn-create-save" class="btn btn-secondary btn-full">Save Puzzle</button>
+              <button type="button" id="btn-create-play" class="btn btn-primary btn-full">Play My Sudoku</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2 class="panel-title">Share &amp; Export / Import</h2>
+            <div class="stack-buttons">
+              <button type="button" id="btn-export-code" class="btn btn-outline btn-full">Copy 81-Digit Code</button>
+              <button type="button" id="btn-export-link" class="btn btn-outline btn-full">Copy Share Link</button>
+              <button type="button" id="btn-export-file" class="btn btn-outline btn-full">Download Puzzle (.txt)</button>
+            </div>
+            <div class="import-box">
+              <label for="import-code-input" class="field-label">Load from 81-digit code (use 0 or . for blanks)</label>
+              <div class="import-row">
+                <input type="text" id="import-code-input" class="text-input" placeholder="e.g. 530070000600195000...">
+                <button type="button" id="btn-import-code" class="btn btn-outline">Load</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <section class="saved-section" aria-labelledby="saved-puzzles-heading">
+        <h2 id="saved-puzzles-heading">Saved Custom Puzzles</h2>
+        <div id="saved-puzzles-list" class="saved-list"></div>
+      </section>
+    </section>
+
+    <!-- ==================== HOW TO PLAY SUDOKU (RULES) VIEW ==================== -->
+    <section id="view-rules" class="view" aria-labelledby="rules-title" hidden>
+      <div class="page-header">
+        <div>
+          <h1 id="rules-title">How to Play Sudoku</h1>
+          <p class="page-lead">Sudoku has five simple rules. Once you understand them, you can solve any puzzle using logic.</p>
+        </div>
+      </div>
+
+      <div class="rules-grid">
+        <article class="rule-card">
+          <div class="rule-num">Rule 1</div>
+          <h2>Each row</h2>
+          <p>Every horizontal row must contain numbers 1 to 9 without repeating any number.</p>
+          <div class="mini-diagram mini-row" aria-label="Example of a valid row containing 1 through 9">
+            <span>5</span><span>3</span><span>4</span><span>6</span><span>7</span><span>8</span><span>9</span><span>1</span><span>2</span>
+          </div>
+        </article>
+
+        <article class="rule-card">
+          <div class="rule-num">Rule 2</div>
+          <h2>Each column</h2>
+          <p>Every vertical column must contain numbers 1 to 9 without repeating any number.</p>
+          <div class="mini-diagram mini-col" aria-label="Example of a valid column containing 1 through 9">
+            <span>5</span><span>6</span><span>1</span><span>8</span><span>4</span><span>7</span><span>9</span><span>2</span><span>3</span>
+          </div>
+        </article>
+
+        <article class="rule-card">
+          <div class="rule-num">Rule 3</div>
+          <h2>Each 3×3 box</h2>
+          <p>Every small 3×3 box must contain numbers 1 to 9 without repeating any number.</p>
+          <div class="mini-diagram mini-box" aria-label="Example of a valid 3 by 3 box containing 1 through 9">
+            <span>5</span><span>3</span><span>4</span>
+            <span>6</span><span>7</span><span>2</span>
+            <span>1</span><span>9</span><span>8</span>
+          </div>
+        </article>
+
+        <article class="rule-card">
+          <div class="rule-num">Rule 4</div>
+          <h2>Use logic</h2>
+          <p>Fill the empty cells using logic. Do not guess randomly.</p>
+          <p class="rule-tip">Every valid Sudoku puzzle has only one correct solution, which can be reached step by step through elimination.</p>
+        </article>
+
+        <article class="rule-card rule-card-wide">
+          <div class="rule-num">Rule 5</div>
+          <h2>Complete the puzzle</h2>
+          <p>The Sudoku is completed when all 81 cells are filled correctly and all three rules are followed.</p>
+          <div class="rule-actions">
+            <button type="button" class="btn btn-primary" data-go="guide">Try the Beginner Guide</button>
+            <button type="button" class="btn btn-secondary" data-go="play">Play an Easy Puzzle</button>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ==================== BEGINNER GUIDE VIEW ==================== -->
+    <section id="view-guide" class="view" aria-labelledby="guide-title" hidden>
+      <div class="page-header">
+        <div>
+          <h1 id="guide-title">Method to Play Sudoku – Beginner Guide</h1>
+          <p class="page-lead">Follow these seven clear steps to find the right number for any empty cell.</p>
+        </div>
+      </div>
+
+      <div class="guide-layout">
+        <div class="steps-panel">
+          <h2>7-Step Solving Method</h2>
+          <ol class="guide-steps">
+            <li><strong>Step 1:</strong> Look at the empty cells in a row.</li>
+            <li><strong>Step 2:</strong> Check which numbers from 1 to 9 are missing.</li>
+            <li><strong>Step 3:</strong> Look at the corresponding column.</li>
+            <li><strong>Step 4:</strong> Check the 3×3 box containing the empty cell.</li>
+            <li><strong>Step 5:</strong> Find a number that does not already appear in its row, column or box.</li>
+            <li><strong>Step 6:</strong> Enter that number.</li>
+            <li><strong>Step 7:</strong> Repeat until the complete grid is filled.</li>
+          </ol>
+
+          <div class="guide-cta">
+            <button type="button" class="btn btn-primary" data-go="play">Practice on a Real Puzzle</button>
+          </div>
+        </div>
+
+        <div class="interactive-example-panel">
+          <div class="example-header">
+            <h2>Interactive Example</h2>
+            <span id="tut-step-counter" class="badge badge-gold">Walkthrough 1 of 6</span>
+          </div>
+
+          <div class="walkthrough-box">
+            <h3 id="tut-step-title">Step 1: Look at the empty cells in Row 2</h3>
+            <p id="tut-step-desc"></p>
+            <div class="walkthrough-nav">
+              <button type="button" id="tut-prev-btn" class="btn btn-outline">Previous Step</button>
+              <button type="button" id="tut-next-btn" class="btn btn-primary">Next Step</button>
+              <button type="button" id="tut-reset-btn" class="btn btn-outline">Reset Example</button>
+            </div>
+          </div>
+
+          <div class="tut-board-area">
+            <div id="tut-grid" class="sudoku-grid tut-grid" role="grid" aria-label="Interactive beginner tutorial 9 by 9 grid"></div>
+          </div>
+
+          <div class="tut-try-area">
+            <p class="field-label">Test your answer for the highlighted cell (Row 2, Column 7):</p>
+            <div id="tut-pad" class="numpad tut-numpad"></div>
+            <div id="tut-feedback" class="status-banner status-info" role="status" aria-live="polite">
+              Use "Next Step" to follow the logic, or select a number (1–9) to fill the highlighted cell.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p><strong>SUDOKU</strong> — Improve your logic, one puzzle at a time.</p>
+      <div class="footer-links">
+        <a href="#home" data-nav="home">Home</a>
+        <a href="#play" data-nav="play">Play</a>
+        <a href="#create" data-nav="create">Create</a>
+        <a href="#rules" data-nav="rules">Rules</a>
+        <a href="#guide" data-nav="guide">Beginner Guide</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/sudoku-engine.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/tutorial.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
